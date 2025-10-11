@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      run: npm run prettier
+    lint:
+      run: npm run lint
+    test:
+      run: npm test
+  skip:
+    - node_modules/**
+    - dist/**
+    - build/**
