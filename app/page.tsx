@@ -16,7 +16,7 @@ function Intro() {
         Blog de TDW.
       </h1>
       <h2 className="text-center md:text-left text-lg mt-5 md:pl-8">
-        Aplicação de exemplo para o MP1 com:{' '}
+        Aplicação de exemplo para o MP1 com: {' '}
         <a
           href="https://nextjs.org/"
           className="underline hover:text-success duration-200 transition-colors"
