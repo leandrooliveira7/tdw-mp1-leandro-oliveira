@@ -13,10 +13,7 @@
     }
   },
   "plugins": ["@typescript-eslint"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
   "rules": {
     "no-unused-vars": "warn",
     "@typescript-eslint/no-unused-vars": "warn",
@@ -24,5 +21,5 @@
     "prefer-const": "off",
     "semi": ["warn", "always"],
     "quotes": ["warn", "single"]
-}
+  }
 }
