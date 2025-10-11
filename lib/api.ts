@@ -23,9 +23,9 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
   return fetch(
     `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
     {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${
           preview
             ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
@@ -33,7 +33,7 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
         }`,
       },
       body: JSON.stringify({ query }),
-      next: { tags: ["posts"] },
+      next: { tags: ['posts'] },
     },
   ).then((response) => response.json());
 }
@@ -44,7 +44,7 @@ function extractPost(fetchResponse: any): any {
 
 function extractPostEntries(fetchResponse: any): any[] {
   if (!fetchResponse?.data?.postCollection?.items) {
-    console.error("Failed to fetch posts from Contentful:", fetchResponse);
+    console.error('Failed to fetch posts from Contentful:', fetchResponse);
     return [];
   }
   return fetchResponse.data.postCollection.items;
@@ -68,7 +68,7 @@ export async function getAllPosts(isDraftMode: boolean): Promise<any[]> {
   const entries = await fetchGraphQL(
     `query {
       postCollection(where: { slug_exists: true }, order: date_DESC, preview: ${
-        isDraftMode ? "true" : "false"
+        isDraftMode ? 'true' : 'false'
       }) {
         items {
           ${POST_GRAPHQL_FIELDS}
@@ -87,7 +87,7 @@ export async function getPostAndMorePosts(
   const entry = await fetchGraphQL(
     `query {
       postCollection(where: { slug: "${slug}" }, preview: ${
-        preview ? "true" : "false"
+        preview ? 'true' : 'false'
       }, limit: 1) {
         items {
           ${POST_GRAPHQL_FIELDS}
@@ -99,7 +99,7 @@ export async function getPostAndMorePosts(
   const entries = await fetchGraphQL(
     `query {
       postCollection(where: { slug_not_in: "${slug}" }, order: date_DESC, preview: ${
-        preview ? "true" : "false"
+        preview ? 'true' : 'false'
       }, limit: 2) {
         items {
           ${POST_GRAPHQL_FIELDS}

@@ -1,13 +1,13 @@
-import Link from "next/link";
-import { draftMode } from "next/headers";
+import Link from 'next/link';
+import { draftMode } from 'next/headers';
 
-import Date from "./date";
-import CoverImage from "./cover-image";
-import Avatar from "./avatar";
-import MoreStories from "./more-stories";
+import Date from './date';
+import CoverImage from './cover-image';
+import Avatar from './avatar';
+import MoreStories from './more-stories';
 
-import { getAllPosts } from "@/lib/api";
-import { CMS_NAME, CMS_URL } from "@/lib/constants";
+import { getAllPosts } from '@/lib/api';
+import { CMS_NAME, CMS_URL } from '@/lib/constants';
 
 function Intro() {
   return (
@@ -16,14 +16,14 @@ function Intro() {
         Blog de TDW.
       </h1>
       <h2 className="text-center md:text-left text-lg mt-5 md:pl-8">
-        Aplicação de exemplo para o MP1 com:{" "}
+        Aplicação de exemplo para o MP1 com:{' '}
         <a
           href="https://nextjs.org/"
           className="underline hover:text-success duration-200 transition-colors"
         >
           Next.js
-        </a>{" "}
-        e{" "}
+        </a>{' '}
+        e{' '}
         <a
           href={CMS_URL}
           className="underline hover:text-success duration-200 transition-colors"
@@ -79,7 +79,7 @@ function HeroPost({
 export default async function Page() {
   const { isEnabled } = await draftMode();
   const allPosts = await getAllPosts(isEnabled);
-  
+
   if (!allPosts || allPosts.length === 0) {
     return (
       <div className="container mx-auto px-5">
@@ -88,7 +88,7 @@ export default async function Page() {
       </div>
     );
   }
-  
+
   const heroPost = allPosts[0];
   const morePosts = allPosts.slice(1);
 

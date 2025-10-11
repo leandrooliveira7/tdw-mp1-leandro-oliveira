@@ -1,6 +1,6 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { EXAMPLE_PATH, CMS_NAME } from "@/lib/constants";
+import './globals.css';
+import { Inter } from 'next/font/google';
+import { EXAMPLE_PATH, CMS_NAME } from '@/lib/constants';
 
 export const metadata = {
   title: `Next.js and ${CMS_NAME} Example`,
@@ -8,9 +8,9 @@ export const metadata = {
 };
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 function Footer() {
