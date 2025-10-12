@@ -31,10 +31,10 @@ jobs:
       - name: Testes
         run: npm test
 
-  deploy:
+  build:
     needs: build-and-validate
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'  # Só corre deploy na branch default
+    if: github.ref == 'refs/heads/main' # Só corre deploy na branch default
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
@@ -47,3 +47,23 @@ jobs:
       - name: Instalar dependências
         run: npm ci
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # garante que o build passa antes
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
