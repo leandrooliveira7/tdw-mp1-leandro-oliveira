@@ -21,6 +21,7 @@
     "autoprefixer": "10.4.15",
     "contentful-import": "^9.0.4",
     "date-fns": "2.30.0",
+    "netlify-cli": "^23.9.1",
     "next": "latest",
     "postcss": "8.4.31",
     "react": "^18.2.0",

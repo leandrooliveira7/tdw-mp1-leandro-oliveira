@@ -49,7 +49,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build  # garante que o build passa antes
+    needs: build # garante que o build passa antes
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
