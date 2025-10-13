@@ -34,7 +34,7 @@ jobs:
   build:
     needs: build-and-validate
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Só corre deploy na branch default
+    
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
