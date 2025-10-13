@@ -8,7 +8,8 @@ on:
   repository_dispatch:
     types: [cms-update]
   schedule:
-    - cron: '0 0 * * 1-5' # todos os dias às 00:00 UTC
+    #atualizar isto depois no fim, antes da entrega
+    - cron: '0 0 * * 1' # todos os dias às 00:00 UTC
 
 jobs:
   build-and-validate:
@@ -50,10 +51,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build # garante que o build passa antes
+    if: github.ref == 'refs/heads/main'
     env:
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
       CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
       CONTENTFUL_PREVIEW_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_PREVIEW_ACCESS_TOKEN }}
+      TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
