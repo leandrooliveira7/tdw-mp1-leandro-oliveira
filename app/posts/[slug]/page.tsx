@@ -10,19 +10,14 @@ import { Markdown } from '@/lib/markdown';
 import { getAllPosts, getPostAndMorePosts } from '@/lib/api';
 
 export async function generateStaticParams() {
-  const allPosts = await getAllPosts(false);
-
-  return allPosts.map((post) => ({
+  const allPosts = (await getAllPosts(false)) || [];
+  return allPosts.map((post: { slug: string }) => ({
     slug: post.slug,
   }));
 }
 
-export default async function PostPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default async function PostPage(props: any) {
+  const { slug } = props.params as { slug: string };
   const { isEnabled } = await draftMode();
   const { post, morePosts } = await getPostAndMorePosts(slug, isEnabled);
 
