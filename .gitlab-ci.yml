@@ -52,16 +52,23 @@ deploy:
   only:
     - main
   script:
+    - npm ci
+    - npm run build
     - npm install -g netlify-cli
-    - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
+    # Upload the locally built `out` directory so Netlify does not run a remote build
+    - netlify deploy --dir=out --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
   after_script:
     - |
-      if [ "$CI_JOB_STATUS" = "success" ]; then
-        curl -H "Content-Type: application/json" \
-             -d '{"text":"✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
-             "$TEAMS_WEBHOOK_URL"
+      if [ -n "$TEAMS_WEBHOOK_URL" ]; then
+        if [ "$CI_JOB_STATUS" = "success" ]; then
+          curl -H "Content-Type: application/json" \
+               -d '{"text":"✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
+               "$TEAMS_WEBHOOK_URL"
+        else
+          curl -H "Content-Type: application/json" \
+               -d '{"text":"❌ O deploy falhou no GitLab! Verifica o pipeline 😞"}' \
+               "$TEAMS_WEBHOOK_URL"
+        fi
       else
-        curl -H "Content-Type: application/json" \
-             -d '{"text":"❌ O deploy falhou no GitLab! Verifica o pipeline 😞"}' \
-             "$TEAMS_WEBHOOK_URL"
+        echo "TEAMS_WEBHOOK_URL not set; skipping notification"
       fi
