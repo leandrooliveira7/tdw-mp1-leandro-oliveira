@@ -23,7 +23,7 @@ function Intro() {
         >
           Next.js
         </a>{' '}
-        <h1>Olá Leandro</h1>e{' '}
+        <h1>Olá Leandro</h1>e <h2>Olá Leandro</h2>e{' '}
         <a
           href={CMS_URL}
           className="underline hover:text-success duration-200 transition-colors"
