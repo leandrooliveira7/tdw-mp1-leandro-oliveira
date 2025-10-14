@@ -29,8 +29,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Testes c/ coverage
-        run: npm test:coverage
+      - name: Testes 
+        run: npm test
 
   build:
     needs: build-and-validate
@@ -85,7 +85,6 @@ jobs:
                -d '{"text": "✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
                ${{ secrets.TEAMS_WEBHOOK_URL }}
 
-      
       - name: Notificação no Microsoft Teams (Falha)
         if: failure()
         run: |
