@@ -51,7 +51,9 @@ async function fetchGraphQL(query: string, preview = false): Promise<any> {
 
   // If the response is HTML (starts with '<'), it's likely an error page
   if (!res.ok) {
-    throw new Error(`Contentful GraphQL request failed: ${res.status} ${res.statusText} - ${text.slice(0, 200)}`);
+    throw new Error(
+      `Contentful GraphQL request failed: ${res.status} ${res.statusText} - ${text.slice(0, 200)}`,
+    );
   }
 
   try {
