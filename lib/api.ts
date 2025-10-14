@@ -20,22 +20,49 @@ const POST_GRAPHQL_FIELDS = `
 `;
 
 async function fetchGraphQL(query: string, preview = false): Promise<any> {
-  return fetch(
-    `https://graphql.contentful.com/content/v1/spaces/${process.env.CONTENTFUL_SPACE_ID}`,
+  const spaceId = process.env.CONTENTFUL_SPACE_ID;
+  const token = preview
+    ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
+    : process.env.CONTENTFUL_ACCESS_TOKEN;
+
+  if (!spaceId) {
+    throw new Error('Missing CONTENTFUL_SPACE_ID environment variable');
+  }
+  if (!token) {
+    throw new Error(
+      `Missing ${preview ? 'CONTENTFUL_PREVIEW_ACCESS_TOKEN' : 'CONTENTFUL_ACCESS_TOKEN'} environment variable`,
+    );
+  }
+
+  const res = await fetch(
+    `https://graphql.contentful.com/content/v1/spaces/${spaceId}`,
     {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${
-          preview
-            ? process.env.CONTENTFUL_PREVIEW_ACCESS_TOKEN
-            : process.env.CONTENTFUL_ACCESS_TOKEN
-        }`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ query }),
       next: { tags: ['posts'] },
     },
-  ).then((response) => response.json());
+  );
+
+  const text = await res.text();
+
+  // If the response is HTML (starts with '<'), it's likely an error page
+  if (!res.ok) {
+    throw new Error(`Contentful GraphQL request failed: ${res.status} ${res.statusText} - ${text.slice(0, 200)}`);
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    // Provide a helpful message when HTML or other non-JSON is returned
+    const snippet = text.slice(0, 500);
+    throw new Error(
+      `Failed to parse JSON response from Contentful GraphQL endpoint. Response start: ${snippet}`,
+    );
+  }
 }
 
 function extractPost(fetchResponse: any): any {

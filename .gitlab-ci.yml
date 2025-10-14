@@ -18,6 +18,19 @@ validate:
     NODE_ENV: 'development'
     NPM_CONFIG_PRODUCTION: 'false'
   script:
+    # Fail early with clear message when required Contentful variables are missing
+    - |
+      if [ -z "$CONTENTFUL_SPACE_ID" ]; then
+        echo "ERROR: CONTENTFUL_SPACE_ID is not set in CI variables"; exit 1
+      fi
+    - |
+      if [ -z "$CONTENTFUL_ACCESS_TOKEN" ]; then
+        echo "ERROR: CONTENTFUL_ACCESS_TOKEN is not set in CI variables"; exit 1
+      fi
+    - |
+      if [ -z "$CONTENTFUL_PREVIEW_ACCESS_TOKEN" ]; then
+        echo "WARNING: CONTENTFUL_PREVIEW_ACCESS_TOKEN is not set (only needed for draft preview)"
+      fi
     - npm ci
     - npm run lint
     - npm run test:coverage
