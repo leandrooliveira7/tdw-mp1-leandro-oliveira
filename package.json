@@ -8,7 +8,9 @@
     "prettier": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
+    
   },
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^15.17.1",

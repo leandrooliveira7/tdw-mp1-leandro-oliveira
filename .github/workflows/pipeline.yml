@@ -29,8 +29,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Testes
-        run: npm test
+      - name: Testes c/ coverage
+        run: npm test:coverage
 
   build:
     needs: build-and-validate
@@ -77,3 +77,18 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
+
+      - name: Notificação no Microsoft Teams (Sucesso)
+        if: success()
+        run: |
+          curl -H 'Content-Type: application/json' \
+               -d '{"text": "✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
+               ${{ secrets.TEAMS_WEBHOOK_URL }}
+
+      
+      - name: Notificação no Microsoft Teams (Falha)
+        if: failure()
+        run: |
+          curl -H 'Content-Type: application/json' \
+               -d '{"text": "❌ O deploy falhou! Verifica o pipeline no GitHub Actions 😞"}' \
+               ${{ secrets.TEAMS_WEBHOOK_URL }}
