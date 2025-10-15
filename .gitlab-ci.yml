@@ -20,6 +20,9 @@ variables:
   CONTENTFUL_PREVIEW_ACCESS_TOKEN: $CONTENTFUL_PREVIEW_ACCESS_TOKEN
   NETLIFY_AUTH_TOKEN: $NETLIFY_AUTH_TOKEN
   NETLIFY_SITE_ID: $NETLIFY_SITE_ID
+  VERCEL_TOKEN: $VERCEL_TOKEN
+  VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID
+  VERCEL_ORG_ID: $VERCEL_ORG_ID
 
 validate:
   stage: validate
@@ -80,11 +83,24 @@ deploy:
   only:
     - main
   script:
+    - |
+      if [ -z "$VERCEL_TOKEN" ]; then
+        echo "ERROR: VERCEL_TOKEN is not set in CI variables"; exit 1
+      fi
     - npm ci
     - npm run build
-    - npm install -g netlify-cli
-    # Upload the locally built `out` directory so Netlify does not run a remote build
-    - netlify deploy --dir=out --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
+    - npm install -g vercel
+    - |
+      # Build the vercel deploy command. Use optional project/org params when present.
+      DEPLOY_CMD=(vercel --prod --token "$VERCEL_TOKEN" --confirm)
+      if [ -n "$VERCEL_PROJECT_ID" ]; then
+        DEPLOY_CMD+=(--project "$VERCEL_PROJECT_ID")
+      fi
+      if [ -n "$VERCEL_ORG_ID" ]; then
+        DEPLOY_CMD+=(--scope "$VERCEL_ORG_ID")
+      fi
+      echo "Deploying to Vercel (masked token) ..."
+      "${DEPLOY_CMD[@]}"
   after_script:
     - |
       if [ -n "$TEAMS_WEBHOOK_URL" ]; then
