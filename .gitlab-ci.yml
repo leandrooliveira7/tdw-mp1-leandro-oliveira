@@ -62,7 +62,7 @@ deploy:
       if [ -n "$TEAMS_WEBHOOK_URL" ]; then
         echo "TEAMS_WEBHOOK_URL appears set (length: ${#TEAMS_WEBHOOK_URL})"
         if [ "$CI_JOB_STATUS" = "success" ]; then
-          payload='{"text":"✅ Deploy concluído com sucesso no Netlify! 🎉"}'
+          payload='{"text":"✅ Deploy concluído com sucesso no Netlify (GitLab)! 🎉"}'
         else
           payload='{"text":"❌ O deploy falhou no GitLab! Verifica o pipeline 😞"}'
         fi
