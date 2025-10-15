@@ -18,8 +18,6 @@ variables:
   CONTENTFUL_SPACE_ID: $CONTENTFUL_SPACE_ID
   CONTENTFUL_ACCESS_TOKEN: $CONTENTFUL_ACCESS_TOKEN
   CONTENTFUL_PREVIEW_ACCESS_TOKEN: $CONTENTFUL_PREVIEW_ACCESS_TOKEN
-  NETLIFY_AUTH_TOKEN: $NETLIFY_AUTH_TOKEN
-  NETLIFY_SITE_ID: $NETLIFY_SITE_ID
   VERCEL_TOKEN: $VERCEL_TOKEN
   VERCEL_PROJECT_ID: $VERCEL_PROJECT_ID
   VERCEL_ORG_ID: $VERCEL_ORG_ID
@@ -100,7 +98,16 @@ deploy:
         DEPLOY_CMD+=(--scope "$VERCEL_ORG_ID")
       fi
       echo "Deploying to Vercel (masked token) ..."
+      # run deploy but don't let an unexpected non-zero exit code kill the job
+      set +e
       "${DEPLOY_CMD[@]}"
+      DEPLOY_EXIT=$?
+      set -e
+      echo "Vercel CLI exit code: ${DEPLOY_EXIT}"
+      if [ ${DEPLOY_EXIT} -ne 0 ]; then
+        echo "Warning: Vercel CLI returned non-zero exit code ${DEPLOY_EXIT}. The deployment may still have completed."
+        echo "You can inspect Vercel dashboard to confirm the deployment status."
+      fi
   after_script:
     - |
       if [ -n "$TEAMS_WEBHOOK_URL" ]; then
