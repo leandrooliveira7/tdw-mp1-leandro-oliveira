@@ -60,14 +60,19 @@ deploy:
   after_script:
     - |
       if [ -n "$TEAMS_WEBHOOK_URL" ]; then
+        echo "TEAMS_WEBHOOK_URL appears set (length: ${#TEAMS_WEBHOOK_URL})"
         if [ "$CI_JOB_STATUS" = "success" ]; then
-          curl -H "Content-Type: application/json" \
-               -d '{"text":"✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
-               "$TEAMS_WEBHOOK_URL"
+          payload='{"text":"✅ Deploy concluído com sucesso no Netlify! 🎉"}'
         else
-          curl -H "Content-Type: application/json" \
-               -d '{"text":"❌ O deploy falhou no GitLab! Verifica o pipeline 😞"}' \
-               "$TEAMS_WEBHOOK_URL"
+          payload='{"text":"❌ O deploy falhou no GitLab! Verifica o pipeline 😞"}'
+        fi
+        echo "Sending notification to Teams (masked)..."
+        # Capture curl exit and HTTP status without printing the webhook URL
+        http_code=$(curl -s -S -o /tmp/teams_resp -w "%{http_code}" -H "Content-Type: application/json" -d "$payload" "$TEAMS_WEBHOOK_URL" || echo "CURL_FAILED")
+        echo "curl returned: $http_code"
+        if [ -f /tmp/teams_resp ]; then
+          echo "Response body (first 200 chars):"
+          head -c 200 /tmp/teams_resp | sed -n '1,200p'
         fi
       else
         echo "TEAMS_WEBHOOK_URL not set; skipping notification"
