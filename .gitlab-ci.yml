@@ -61,11 +61,11 @@ contentful_publish:
       when: always
     - when: never
   script:
-    - echo "Pipeline started by trigger (CI_PIPELINE_SOURCE=$CI_PIPELINE_SOURCE)"
-    - echo "CONTENTFUL_EVENT=${CONTENTFUL_EVENT:-<not set>}"
-    - echo "CONTENTFUL_ENTRY_ID=${CONTENTFUL_ENTRY_ID:-<not set>}"
-    - echo "Trigger ref: $CI_COMMIT_REF_NAME"
-    - echo "Continuing with pipeline..."
+    - 'echo "Pipeline started by trigger (CI_PIPELINE_SOURCE=$CI_PIPELINE_SOURCE)"'
+    - 'echo "CONTENTFUL_EVENT=${CONTENTFUL_EVENT:-not_set}"'
+    - 'echo "CONTENTFUL_ENTRY_ID=${CONTENTFUL_ENTRY_ID:-not_set}"'
+    - 'echo "Trigger ref: $CI_COMMIT_REF_NAME"'
+    - 'echo "Continuing with pipeline..."'
 
 build:
   stage: build
