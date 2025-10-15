@@ -1,4 +1,14 @@
 stages:
+  # Optional webhook stage: pipelines triggered by external services (like Contentful)
+  # will run jobs in this stage first. To trigger from Contentful:
+  # 1) In GitLab: Project > Settings > CI/CD > Pipeline triggers -> Add trigger
+  #    - Note the trigger token and the project ID
+  # 2) Create a Contentful webhook that POSTS to:
+  #    https://gitlab.com/api/v4/projects/<PROJECT_ID>/trigger/pipeline?token=<TRIGGER_TOKEN>&ref=main
+  #    (set ref=main or the branch you want the pipeline to run on)
+  # 3) Optionally include form fields named CONTENTFUL_EVENT or CONTENTFUL_ENTRY_ID
+  #    (GitLab will expose those as CI variables inside the pipeline)
+  - webhook
   - validate
   - build
   - deploy
@@ -38,6 +48,24 @@ validate:
     paths:
       - coverage
     expire_in: 1 week
+
+# A lightweight job that runs when the pipeline is started via a trigger
+# (e.g. from a Contentful webhook). The webhook should POST to the
+# GitLab trigger URL with ref=main. You can also include form fields to
+# pass through as pipeline variables (for example CONTENTFUL_EVENT).
+contentful_publish:
+  stage: webhook
+  image: busybox:1.36.1
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: always
+    - when: never
+  script:
+    - echo "Pipeline started by trigger (CI_PIPELINE_SOURCE=$CI_PIPELINE_SOURCE)"
+    - echo "CONTENTFUL_EVENT=${CONTENTFUL_EVENT:-<not set>}"
+    - echo "CONTENTFUL_ENTRY_ID=${CONTENTFUL_ENTRY_ID:-<not set>}"
+    - echo "Trigger ref: $CI_COMMIT_REF_NAME"
+    - echo "Continuing with pipeline..."
 
 build:
   stage: build
