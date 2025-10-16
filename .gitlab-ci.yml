@@ -78,8 +78,10 @@ build:
 deploy:
   stage: deploy
   image: node:20
-  only:
-    - main
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
+      when: always
+    - when: never
   script:
     - |
       if [ -z "$VERCEL_TOKEN" ]; then
