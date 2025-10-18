@@ -24,7 +24,6 @@ validate:
     NODE_ENV: 'development'
     NPM_CONFIG_PRODUCTION: 'false'
   script:
-    
     - |
       if [ -z "$CONTENTFUL_SPACE_ID" ]; then
         echo "ERROR: CONTENTFUL_SPACE_ID is not set in CI variables"; exit 1
@@ -44,7 +43,6 @@ validate:
     paths:
       - coverage
     expire_in: 1 week
-
 
 contentful_publish:
   stage: webhook
