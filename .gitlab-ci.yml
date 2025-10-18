@@ -61,7 +61,10 @@ contentful_publish:
 build:
   stage: build
   image: node:20
+  dependencies:
+    - validate
   script:
+    - echo "==== Verificando secrets ===="
     - npm ci
     - npm run build
   artifacts:
