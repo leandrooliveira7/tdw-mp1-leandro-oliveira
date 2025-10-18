@@ -34,8 +34,8 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-latest
-    needs: validate # garante que o build passa antes
-    if: github.ref == 'refs/heads/main'
+    needs: validate 
+    
     env:
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
       CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-        
+
       - name: Instalar dependências
         run: npm ci
 
