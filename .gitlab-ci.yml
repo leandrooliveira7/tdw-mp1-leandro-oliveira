@@ -64,6 +64,7 @@ build:
   dependencies:
     - validate
   script:
+    - echo "==== Verificando secrets ===="
     - npm ci
     - npm run build
   artifacts:
