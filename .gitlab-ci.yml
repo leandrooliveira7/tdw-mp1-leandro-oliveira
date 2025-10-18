@@ -63,7 +63,7 @@ build:
   stage: build
   image: node:20
   dependencies:
-    - validate  # pega o node_modules do validate
+    - validate # pega o node_modules do validate
   script:
     - npm run build
   artifacts:
