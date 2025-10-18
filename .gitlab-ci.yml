@@ -16,6 +16,10 @@ variables:
 validate:
   stage: validate
   image: node:20
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
   variables:
     NODE_ENV: 'development'
     NPM_CONFIG_PRODUCTION: 'false'
@@ -58,9 +62,14 @@ contentful_publish:
 build:
   stage: build
   image: node:20
+  dependencies:
+    - validate  # pega o node_modules do validate
   script:
-    - npm ci
     - npm run build
+  artifacts:
+    paths:
+      - .next
+    expire_in: 1 week
 
 deploy:
   stage: deploy
@@ -69,6 +78,8 @@ deploy:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
     - when: never
+  dependencies:
+    - build
   script:
     - |
       if [ -z "$VERCEL_TOKEN" ]; then
