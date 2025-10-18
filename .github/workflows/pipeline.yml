@@ -32,36 +32,9 @@ jobs:
       - name: Testes
         run: npm test
 
-  build:
-    needs: validate
+  build-and-deploy:
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Instalar dependências
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-        #guarda o resultado do build (pasta ./dist) como artifact
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: ./dist # ajusta conforme o nome da tua pasta de build
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build # garante que o build passa antes
+    needs: validate # garante que o build passa antes
     if: github.ref == 'refs/heads/main'
     env:
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
@@ -70,18 +43,19 @@ jobs:
       TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+        
+      - name: Instalar dependências
+        run: npm ci
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: build-output
-          path: .next
+      - name: Build
+        run: npm run build
 
       - name: Deploy to Netlify
         env:
