@@ -24,7 +24,6 @@ validate:
     NODE_ENV: 'development'
     NPM_CONFIG_PRODUCTION: 'false'
   script:
-    # Fail early with clear message when required Contentful variables are missing
     - |
       if [ -z "$CONTENTFUL_SPACE_ID" ]; then
         echo "ERROR: CONTENTFUL_SPACE_ID is not set in CI variables"; exit 1
@@ -62,9 +61,8 @@ contentful_publish:
 build:
   stage: build
   image: node:20
-  dependencies:
-    - validate # pega o node_modules do validate
   script:
+    - npm ci
     - npm run build
   artifacts:
     paths:
@@ -74,12 +72,12 @@ build:
 deploy:
   stage: deploy
   image: node:20
+  dependencies:
+    - build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: always
     - when: never
-  dependencies:
-    - build
   script:
     - |
       if [ -z "$VERCEL_TOKEN" ]; then
