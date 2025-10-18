@@ -8,11 +8,10 @@ on:
   repository_dispatch:
     types: [cms-update]
   schedule:
-    #atualizar isto depois no fim, antes da entrega
-    - cron: '0 0 * * 1' # todos os dias às 00:00 UTC
+    - cron: '0 0 */2 * *' #executa a cada 2 dias às 00:00 UTC
 
 jobs:
-  build-and-validate:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
@@ -22,6 +21,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Instalar dependências
         run: npm ci
@@ -33,7 +33,7 @@ jobs:
         run: npm test
 
   build:
-    needs: build-and-validate
+    needs: validate
     runs-on: ubuntu-latest
 
     steps:
@@ -44,9 +44,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Instalar dependências
         run: npm ci
+
+      - name: Build
+        run: npm run build
+
+        #guarda o resultado do build (pasta ./dist) como artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: ./dist # ajusta conforme o nome da tua pasta de build
+
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,11 +78,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build 2
-        run: npm run build
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: .next
 
       - name: Deploy to Netlify
         env:
