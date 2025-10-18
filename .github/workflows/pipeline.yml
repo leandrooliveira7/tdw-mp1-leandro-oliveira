@@ -66,13 +66,37 @@ jobs:
       - name: Notificação no Microsoft Teams (Sucesso)
         if: success()
         run: |
+          DEPLOY_URL="https://tdw-mp1-leandro-oliveira.tdw-mctw.pt"
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+          COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+          WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          PAYLOAD=$(jq -n \
+            --arg text "✅ Deploy concluído com sucesso no Netlify! 🎉" \
+            --arg author "$COMMIT_AUTHOR" \
+            --arg msg "$COMMIT_MESSAGE" \
+            --arg url "$WORKFLOW_URL" \
+            --arg deploy "$DEPLOY_URL" \
+            '{text: "\($text)\n\n🧑‍💻 Autor: \($author)\n📝 Commit: \($msg)\n🔗 [Ver pipeline no GitHub Actions](\($url))\n🌐 [Ver site publicado](\($deploy))"}')
+
           curl -H 'Content-Type: application/json' \
-               -d '{"text": "✅ Deploy concluído com sucesso no Netlify! 🎉"}' \
+               -d "$PAYLOAD" \
                ${{ secrets.TEAMS_WEBHOOK_URL }}
 
       - name: Notificação no Microsoft Teams (Falha)
         if: failure()
         run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%s)
+          COMMIT_AUTHOR=$(git log -1 --pretty=%an)
+          WORKFLOW_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          PAYLOAD=$(jq -n \
+            --arg text "❌ O deploy falhou no GitHub Actions! 😞" \
+            --arg author "$COMMIT_AUTHOR" \
+            --arg msg "$COMMIT_MESSAGE" \
+            --arg url "$WORKFLOW_URL" \
+            '{text: "\($text)\n\n🧑‍💻 Autor: \($author)\n📝 Commit: \($msg)\n🔗 [Ver pipeline no GitHub Actions](\($url))"}')
+
           curl -H 'Content-Type: application/json' \
-               -d '{"text": "❌ O deploy falhou! Verifica o pipeline no GitHub Actions 😞"}' \
+               -d "$PAYLOAD" \
                ${{ secrets.TEAMS_WEBHOOK_URL }}
